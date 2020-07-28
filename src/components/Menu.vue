@@ -3,7 +3,7 @@
     <el-menu-item index="/">首页</el-menu-item>
     <el-submenu index="/creation">
       <template slot="title">创意</template>
-      <el-menu-item index="2-1" to="/">TODO1</el-menu-item>
+      <el-menu-item index="/files">文件列表</el-menu-item>
       <el-menu-item index="2-2">TODO2</el-menu-item>
       <el-menu-item index="2-3">TODO3</el-menu-item>
       <el-submenu index="2-4">
