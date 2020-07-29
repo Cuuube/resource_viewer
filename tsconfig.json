@@ -10,6 +10,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": true,
     "baseUrl": ".",
     "types": [
       "webpack-env"
@@ -31,7 +33,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "./types/**/*"
   ],
   "exclude": [
     "node_modules"

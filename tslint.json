@@ -14,6 +14,20 @@
     "no-consecutive-blank-lines": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
-    "quotemark": [true, "single"]
+    "quotemark": [true, "single", "jsx-double"],
+    "semicolon": [true, "never"],
+    "member-access": [true, "no-public"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "no-shadowed-variable": false,
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "only-multiline",
+        "imports": "only-multiline",
+        "exports": "only-multiline",
+        "functions": "never"
+      }
+    ]
   }
 }

@@ -1,40 +1,51 @@
 <template>
   <div class="file-list">
-    <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column label="类型">
-        <template slot-scope="{ row }">
-          <span>{{ getType(row) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="文件名"
-        width="180">
-        <template slot-scope="{ row }">
-          <a @click="handleClickRow(row)">{{ row.name }}</a>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="fullpath"
-        label="地址">
-      </el-table-column>
-      <el-table-column
-        prop="modify_time"
-        label="修改日期"
-        width="180">
-      </el-table-column>
-      
-      <Prevue v-if="showFile" :file="showFile" />
-    </el-table>
+    <el-row>
+      <el-col :span="4" class="container-left">
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column label="类型" width="50">
+            <template slot-scope="{ row }">
+              <!-- <span>{{ getType(row) }}</span> -->
+              <i :class="getTypeIcon(row)" size="xl"></i>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="文件名"
+            width="180">
+            <template slot-scope="{ row }">
+              <a @click="handleClickRow(row)">{{ row.name }}</a>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column
+            prop="fullpath"
+            label="地址">
+          </el-table-column>
+          <el-table-column
+            prop="modifyTime"
+            label="修改日期"
+            width="180">
+          </el-table-column> -->
+        </el-table>
+      </el-col>
+
+      <el-col :span="8">
+        <div>
+          <Prevue v-if="showFile" :file="showFile" />
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator';
+  import { Component, Prop, Vue } from 'vue-property-decorator'
   import Prevue from '../components/Prevue.vue'
-  import axios from 'axios';
+
+  import { getFileList } from '../service/FileService'
+  import { isImage, isVideo, isText  } from '../utils/FileUtil'
 
   @Component({ components: { Prevue } })
   export default class FileList extends Vue {
@@ -44,49 +55,60 @@
     private currentPath!: string
 
     private getType(fileinfo: IFileInfo): string {
-      if (fileinfo.is_dir) {
+      if (fileinfo.isDir) {
         return 'dir'
       }
-      const arr = fileinfo.fullpath.split('.')
-      return arr[arr.length - 1]
+      return fileinfo.ext || ''
     }
 
     private async getList(filePath: string) {
-      this.currentPath = filePath;
-      const url = `http://0.0.0.0:8081/resources?path=${filePath}`
-      let res = await axios.get(url)
-      let data: IFileInfo[] = res.data
-      data = data.filter(d => d.is_dir).concat(data.filter(d => !d.is_dir))
+      this.currentPath = filePath
+      const data: IFileInfo[] = await getFileList(filePath)
 
       data.unshift({
-        fullpath: filePath + "/../",
-        is_dir: true,
-        modify_time: 0,
-        name: "../",
+        fullpath: filePath + '/../',
+        isDir: true,
+        modifyTime: 0,
+        name: '../',
         size: 0
       })
       this.tableData = data
     }
 
     private async handleClickRow(row: IFileInfo) {
-      if (row.is_dir) {
+      if (row.isDir) {
         await this.getList(row.fullpath)
       } else {
         const fileType = this.getType(row)
-        this.showFile = row;
+        this.showFile = row
       }
     }
 
+    private getTypeIcon(row: IFileInfo) {
+      if (row.isDir) {
+        return 'el-icon-folder-opened'
+      }
+      if (isImage(row)) {
+        return 'el-icon-picture-outline'
+      }
+      if (isVideo(row)) {
+        return 'el-icon-film'
+      }
+      if (isText(row)) {
+        return 'el-icon-document'
+      }
+      return 'el-icon-question'
+    }
+
     private created() {
-      this.getList('/home/vm/code/')
+      this.getList('/Users/zxod/Pictures')
     }
   }
-
-  interface IFileInfo {
-    fullpath: string
-    is_dir: boolean
-    modify_time: number
-    name: string
-    size: number
-  }
 </script>
+
+<style>
+  .container-left {
+    max-height: 95vh;
+    overflow: auto;
+  }
+</style>
