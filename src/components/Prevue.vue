@@ -10,7 +10,7 @@
       </video>
     </div>
     <div v-else-if="isText">
-      <pre><code>{{ getContext() }}</code></pre>
+      <pre><code>{{ fileData }}</code></pre>
     </div>
     <div v-else>
       不支持阅览
@@ -19,12 +19,17 @@
 </template>
 
 <script lang="ts">
-  import { Component, Prop, Vue } from 'vue-property-decorator'
+  import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+  import { isImage, isVideo, isText  } from '../utils/FileUtil'
+
+  import { getFileData, getResourceSrc } from '../service/FileService'
 
   @Component
   export default class Prevue extends Vue {
     @Prop()
     private file!: IFileInfo
+
+    private fileData: string = ''
 
     get fileType(): string {
       if (this.file.isDir) {
@@ -35,21 +40,23 @@
     }
 
     get resourceSrc() {
-      return `http://0.0.0.0:8081/resources?path=${this.file.fullpath}`
+      return getResourceSrc(this.file.fullpath)
     }
 
-    get isImage() {
-      return ['png', 'jpg', 'jpeg', 'bmp', 'webp'].includes(this.fileType.toLowerCase())
-    }
-    get isVideo() {
-      return ['mp4', 'm4v', 'mpeg4', 'avi'].includes(this.fileType.toLowerCase())
-    }
-    get isText() {
-      return ['txt', 'go', 'py', 'js', 'ts'].includes(this.fileType.toLowerCase())
+    get isImage() { return isImage(this.file) }
+    get isVideo() { return isVideo(this.file) }
+    get isText() { return isText(this.file) }
+
+    async getContext() {
+      this.fileData = await getFileData(this.file.fullpath)
     }
 
-    getContext() {
-
+    @Watch('file')
+    handleFileChanged(file: IFileInfo): void {
+      console.log(this.isText)
+      if (this.isText) {
+        this.getContext()
+      }
     }
   }
 </script>

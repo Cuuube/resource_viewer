@@ -15,3 +15,7 @@ export const getFileData = async (filePath: string): Promise<string> => {
     let data: string = res.data
     return data
 }
+
+export const getResourceSrc = (filePath: string): string => {
+    return `http://0.0.0.0:8081/resources?path=${filePath}`
+}

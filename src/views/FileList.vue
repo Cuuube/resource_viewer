@@ -31,7 +31,7 @@
         </el-table>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :span="20" class="container-right">
         <div>
           <Prevue v-if="showFile" :file="showFile" />
         </div>
@@ -107,8 +107,11 @@
 </script>
 
 <style>
-  .container-left {
-    max-height: 95vh;
+  .container-left, .container-right {
+    max-height: 100vh;
     overflow: auto;
+  }
+  .container-left {
+    
   }
 </style>
