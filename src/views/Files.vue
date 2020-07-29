@@ -4,7 +4,8 @@
       <el-col :span="4" class="container-left">
         <el-table
           :data="tableData"
-          style="width: 100%">
+          style="width: 100%"
+          @row-click="handleClickRow">
           <el-table-column label="类型" width="50">
             <template slot-scope="{ row }">
               <!-- <span>{{ getType(row) }}</span> -->
@@ -16,7 +17,7 @@
             label="文件名"
             width="180">
             <template slot-scope="{ row }">
-              <a @click="handleClickRow(row)">{{ row.name }}</a>
+              <span>{{ row.name + (row.ext ? `.${row.ext}` : '')}}</span>
             </template>
           </el-table-column>
           <!-- <el-table-column
@@ -48,7 +49,7 @@
   import { isImage, isVideo, isText  } from '../utils/FileUtil'
 
   @Component({ components: { Prevue } })
-  export default class FileList extends Vue {
+  export default class Files extends Vue {
     private tableData: IFileInfo[] = []
 
     private showFile: IFileInfo | null = null
@@ -62,7 +63,6 @@
     }
 
     private async getList(filePath: string) {
-      this.currentPath = filePath
       const data: IFileInfo[] = await getFileList(filePath)
 
       data.unshift({
@@ -73,6 +73,9 @@
         size: 0
       })
       this.tableData = data
+
+      this.currentPath = filePath
+      this.$router.push({ path: '/files', query: { resource: this.currentPath } })
     }
 
     private async handleClickRow(row: IFileInfo) {
@@ -101,7 +104,8 @@
     }
 
     private created() {
-      this.getList('/Users/zxod/Pictures')
+      const resource: string = (this.$route.query['resource'] || '') + ''
+      this.getList(resource || '/Users/zxod/Pictures')
     }
   }
 </script>
@@ -111,7 +115,7 @@
     max-height: 100vh;
     overflow: auto;
   }
-  .container-left {
-    
+  .container-right > div {
+    padding: 0 30px;
   }
 </style>
