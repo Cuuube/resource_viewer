@@ -1,6 +1,6 @@
 <template>
   <div class="file-list">
-    <el-row>
+    <el-row :gutter="40">
       <el-col :span="4" class="container-left">
         <el-table :data="tableData" style="width: 100%" @row-click="handleClickRow">
           <el-table-column label="类型" width="50">
@@ -25,7 +25,7 @@
           </el-table-column>-->
           <el-table-column>
             <template slot-scope="{ row }">
-              <button :class="{'dis':row.isDir,'downloadbtn':true}" @click="download(row)">下载</button>
+              <button class=downloadbtn :v-show="row.isDir" @click="download(row)">下载</button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,7 +51,7 @@ import { isImage, isVideo, isText } from "../utils/FileUtil";
 })
 export default class Files extends Vue {
   private tableData: IFileInfo[] = [];
-  private isshwo: boolean = true;
+  private isshow: boolean = true;
   private showFile: IFileInfo | null = null;
   private currentPath!: string;
   private resource: string;
@@ -88,7 +88,6 @@ export default class Files extends Vue {
       const fileType = this.getType(row);
       this.showFile = row;
     }
-    console.log(this.showFile + "----");
   }
 
   private getTypeIcon(row: IFileInfo) {
@@ -114,8 +113,7 @@ export default class Files extends Vue {
   download(e) {
     /* console.log(getResourceSrc(this.resource || '/Users/zxod/Pictures')); */
     if (e.isDir) {
-      alert("文件夹不要下载");
-      this.isshwo = false;
+      this.isshow = false;
     } else {
       let downpath: string;
       /* console.log(e.fullpath); */
