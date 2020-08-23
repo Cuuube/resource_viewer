@@ -19,3 +19,15 @@ export const getFileData = async (filePath: string): Promise<string> => {
 export const getResourceSrc = (filePath: string): string => {
     return `http://localhost:8081/resources?path=${filePath}`
 }
+export const getfalt=async(path:any):Promise<any>=>{
+    const url=`http://localhost:8081/upload`;
+    let res:any=await axios.create({
+        baseURL:url,
+        headers: {'Content-Type': 'multipart/form-data'},
+        method:'post',
+        params:{
+            path
+        }
+    })
+    return res
+}
